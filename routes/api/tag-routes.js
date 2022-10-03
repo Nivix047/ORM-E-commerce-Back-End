@@ -18,8 +18,8 @@ router.get("/", async (req, res) => {
 router.get("/:id", async (req, res) => {
   try {
     const tag = await Tag.findByPk(req.params.id, {
-      // JOIN with product_tag, using the Tag table
-      include: [{ model: ProductTag, through: Tag }],
+      // JOIN with product, using the Tag table
+      include: [{ model: Product, through: ProductTag }],
     });
 
     if (!tag) {
@@ -44,7 +44,18 @@ router.post("/", async (req, res) => {
 });
 
 // update a tag's name by its `id` value
-router.put("/:id", (req, res) => {});
+router.put("/:id", async (req, res) => {
+  try {
+    await Tag.update(req.body, {
+      where: {
+        id: req.params.id,
+      },
+    });
+    res.status(200).json("Tag successfully updated");
+  } catch (err) {
+    res.status(400).json(err);
+  }
+});
 
 // delete on tag by its `id` value
 router.delete("/:id", async (req, res) => {

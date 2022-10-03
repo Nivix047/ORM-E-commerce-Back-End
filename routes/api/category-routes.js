@@ -20,7 +20,8 @@ router.get("/:id", async (req, res) => {
   try {
     const category = await Category.findByPk(req.params.id, {
       // JOIN with product, using the Product table
-      include: [{ model: Product, through: ProductTag }],
+      // Does the same thing as include: [{model: Product}]
+      include: [Product],
     });
 
     if (!category) {
@@ -45,7 +46,20 @@ router.post("/", async (req, res) => {
 });
 
 // update a category by its `id` value
-router.put("/:id", (req, res) => {});
+router.put("/:id", (req, res) => {
+  // Succinct
+  Category.update(req.body, {
+    where: {
+      id: req.params.id,
+    },
+  })
+    .then(() => {
+      res.json("Update successful");
+    })
+    .catch((err) => {
+      res.status(500).json(err.message);
+    });
+});
 
 // delete a category by its `id` value
 router.delete("/:id", async (req, res) => {
@@ -61,7 +75,7 @@ router.delete("/:id", async (req, res) => {
       return;
     }
 
-    res.status(200).json(category);
+    res.status(200).json("Successfully deleted category!");
   } catch (err) {
     res.status(500).json(err);
   }
