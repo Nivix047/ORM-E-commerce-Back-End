@@ -18,7 +18,6 @@ router.get("/", async (req, res) => {
 router.get("/:id", async (req, res) => {
   try {
     const tag = await Tag.findByPk(req.params.id, {
-      // JOIN with product, using the Tag table
       include: [{ model: Product, through: ProductTag }],
     });
 
